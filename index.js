@@ -31,6 +31,10 @@ async function run() {
     try {
         await client.connect();
         const userCollection = client.db("HSTUStudentPanel").collection("user");
+        const resultCollection_Level_1_Semester_I = client.db("studentResults").collection("level-1-semester-I");
+        const resultCollection_Level_1_Semester_II = client.db("studentResults").collection("level-1-semester-II");
+        const resultCollection_Level_2_Semester_I = client.db("studentResults").collection("level-2-semester-I");
+        const resultCollection_Level_2_Semester_II = client.db("studentResults").collection("level-1-semester-II");
 
         app.put('/user-login/:email', async (req, res) => {
             const email = req.params.email;
@@ -74,6 +78,27 @@ async function run() {
                 }
             }
             const result = await userCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        });
+
+        app.get('/results/:studentIdLevelSemester', verifyJWT, async (req, res) => {
+            const studentIdLevelSemester = req.params.studentIdLevelSemester;
+            const studentId = studentIdLevelSemester.split('&')[1];
+            const level = studentIdLevelSemester.split('&')[2];
+            const semester = studentIdLevelSemester.split('&')[3];
+            let result;
+            if (level === '1' && semester === 'I') {
+                result = await resultCollection_Level_1_Semester_I.findOne({ studentId });
+            }
+            else if (level === '1' && semester === 'II') {
+                result = await resultCollection_Level_1_Semester_II.findOne({ studentId });
+            }
+            else if (level === '2' && semester === 'I') {
+                result = await resultCollection_Level_2_Semester_I.findOne({ studentId });
+            }
+            else if (level === '2' && semester === 'II') {
+                result = await resultCollection_Level_2_Semester_II.findOne({ studentId });
+            }
             res.send(result);
         })
 
