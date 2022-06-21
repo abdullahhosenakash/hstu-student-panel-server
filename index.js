@@ -30,31 +30,53 @@ function verifyJWT(req, res, next) {
 async function run() {
     try {
         await client.connect();
-        const userCollection = client.db("HSTUStudentPanel").collection("students");
+        const userCollection = client.db("HSTUStudentPanel").collection("user");
 
         app.put('/user-login/:email', async (req, res) => {
             const email = req.params.email;
-            const filter = { userEmail: email };
-            const options = { upsert: true };
-            const updatedUser = {
-                $set: { userEmail: email }
-            }
             const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET);
-            const result = await userCollection.updateOne(filter, updatedUser, options);
-            res.send({ result, token });
+            res.send({ token });
         });
 
-        app.get('/user/:studentId', async (req, res) => {
+        app.get('/updateUser/:studentId', verifyJWT, async (req, res) => {
             const studentId = req.params.studentId;
-            const query = { studentId };
-            const result = await userCollection.findOne(query);
+            const result = await userCollection.findOne({ studentId });
             if (result) {
-                res.send(result);
+                if (result.userEmail) {
+                    return res.status(403).send('Forbidden Access');
+                }
+                else {
+                    return res.send(result);
+                }
             }
-            else {
-                res.status(404).send('user not found');
+            res.status(404).send('user not found');
+        });
+
+        app.get('/userInfo/:userEmail', verifyJWT, async (req, res) => {
+            const userEmail = req.params.userEmail;
+            const result = await userCollection.findOne({ userEmail });
+            res.send(result);
+        });
+
+        app.put('/updateUser/:studentId', verifyJWT, async (req, res) => {
+            const studentId = req.params.studentId;
+            const updatedUser = req.body;
+            const filter = { studentId };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    userName: updatedUser.userName,
+                    userEmail: updatedUser.userEmail,
+                    faculty: updatedUser.faculty,
+                    department: updatedUser.department,
+                    phone: updatedUser.phone,
+                    studentIdCardURL: updatedUser.studentIdCardURL
+                }
             }
+            const result = await userCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
         })
+
     }
     finally {
 
