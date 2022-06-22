@@ -34,12 +34,17 @@ async function run() {
         const resultCollection_Level_1_Semester_I = client.db("studentResults").collection("level-1-semester-I");
         const resultCollection_Level_1_Semester_II = client.db("studentResults").collection("level-1-semester-II");
         const resultCollection_Level_2_Semester_I = client.db("studentResults").collection("level-2-semester-I");
-        const resultCollection_Level_2_Semester_II = client.db("studentResults").collection("level-1-semester-II");
+        const resultCollection_Level_2_Semester_II = client.db("studentResults").collection("level-2-semester-II");
+        const resultCollection_Level_3_Semester_I = client.db("studentResults").collection("level-3-semester-I");
+        const resultCollection_Level_3_Semester_II = client.db("studentResults").collection("level-3-semester-II");
+        const resultCollection_Level_4_Semester_I = client.db("studentResults").collection("level-4-semester-I");
+        const resultCollection_Level_4_Semester_II = client.db("studentResults").collection("level-4-semester-II");
 
         app.put('/user-login/:email', async (req, res) => {
             const email = req.params.email;
             const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET);
-            res.send({ token });
+            const user = await userCollection.findOne({ userEmail: email });
+            res.send({ token, user });
         });
 
         app.get('/updateUser/:studentId', verifyJWT, async (req, res) => {
@@ -98,6 +103,18 @@ async function run() {
             }
             else if (level === '2' && semester === 'II') {
                 result = await resultCollection_Level_2_Semester_II.findOne({ studentId });
+            }
+            else if (level === '3' && semester === 'I') {
+                result = await resultCollection_Level_3_Semester_I.findOne({ studentId });
+            }
+            else if (level === '3' && semester === 'II') {
+                result = await resultCollection_Level_3_Semester_II.findOne({ studentId });
+            }
+            else if (level === '4' && semester === 'I') {
+                result = await resultCollection_Level_4_Semester_I.findOne({ studentId });
+            }
+            else if (level === '4' && semester === 'II') {
+                result = await resultCollection_Level_4_Semester_II.findOne({ studentId });
             }
             res.send(result);
         })
