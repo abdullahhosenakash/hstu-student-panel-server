@@ -31,6 +31,7 @@ async function run() {
     try {
         await client.connect();
         const userCollection = client.db("HSTUStudentPanel").collection("user");
+        const adminCollection = client.db("HSTUStudentPanel").collection("admin");
         const resultCollection_Level_1_Semester_I = client.db("studentResults").collection("level-1-semester-I");
         const resultCollection_Level_1_Semester_II = client.db("studentResults").collection("level-1-semester-II");
         const resultCollection_Level_2_Semester_I = client.db("studentResults").collection("level-2-semester-I");
@@ -40,10 +41,22 @@ async function run() {
         const resultCollection_Level_4_Semester_I = client.db("studentResults").collection("level-4-semester-I");
         const resultCollection_Level_4_Semester_II = client.db("studentResults").collection("level-4-semester-II");
 
-        app.put('/user-login/:email', async (req, res) => {
-            const email = req.params.email;
+        app.put('/user-login/:emailAndRole', async (req, res) => {
+            const emailAndRole = req.params.emailAndRole;
+            const email = emailAndRole.split('&')[0];
+            const role = emailAndRole.split('&')[1];
+            console.log(email, role);
             const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET);
-            const user = await userCollection.findOne({ userEmail: email });
+            let user;
+            if (role === 'student') {
+                user = await userCollection.findOne({ userEmail: email });
+            }
+            else if (role === 'admin') {
+                user = await adminCollection.findOne({ userEmail: email });
+            }
+            else {
+                return res.status(401).send('unAuthorized Access')
+            }
             res.send({ token, user });
         });
 
@@ -65,6 +78,19 @@ async function run() {
             const userEmail = req.params.userEmail;
             const result = await userCollection.findOne({ userEmail });
             res.send(result);
+        });
+
+        app.get('/isAdmin/:userEmailAndAdminSecretKey', async (req, res) => {
+            const userEmailAndAdminSecretKey = req.params.userEmailAndAdminSecretKey;
+            const userEmail = userEmailAndAdminSecretKey.split('&')[0];
+            const adminSecretKey = userEmailAndAdminSecretKey.split('&')[1];
+            const result = await adminCollection.findOne({ userEmail });
+            if (result.adminSecretKey === adminSecretKey) {
+                res.send('1');
+            }
+            else {
+                res.send('0');
+            }
         });
 
         app.put('/updateUser/:studentId', verifyJWT, async (req, res) => {
