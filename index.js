@@ -48,10 +48,10 @@ async function run() {
             console.log(email, role);
             const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET);
             let user;
-            if (role === 'student') {
+            if (role === '73747564656E74') {
                 user = await userCollection.findOne({ userEmail: email });
             }
-            else if (role === 'admin') {
+            else if (role === '61646D696E') {
                 user = await adminCollection.findOne({ userEmail: email });
             }
             else {
