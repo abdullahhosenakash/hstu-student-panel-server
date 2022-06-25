@@ -45,7 +45,6 @@ async function run() {
             const emailAndRole = req.params.emailAndRole;
             const email = emailAndRole.split('&')[0];
             const role = emailAndRole.split('&')[1];
-            console.log(email, role);
             const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET);
             let user;
             if (role === '73747564656E74') {
@@ -78,6 +77,17 @@ async function run() {
             const userEmail = req.params.userEmail;
             const result = await userCollection.findOne({ userEmail });
             res.send(result);
+        });
+
+        app.get('/studentInfo/:studentId', verifyJWT, async (req, res) => {
+            const studentId = req.params.studentId;
+            const result = await resultCollection_Level_1_Semester_I.findOne({ studentId });
+            if (result) {
+                res.send({ studentName: result.studentName });
+            }
+            else {
+                res.send('0');
+            }
         });
 
         app.get('/isAdmin/:userEmailAndAdminSecretKey', async (req, res) => {
@@ -141,6 +151,38 @@ async function run() {
             }
             else if (level === '4' && semester === 'II') {
                 result = await resultCollection_Level_4_Semester_II.findOne({ studentId });
+            }
+            res.send(result);
+        });
+
+        app.post('/updateResult', verifyJWT, async (req, res) => {
+            const studentResult = req.body;
+            const level = studentResult.level;
+            const semester = studentResult.semester;
+            let result;
+            if (level === '1' && semester === 'I') {
+                result = await resultCollection_Level_1_Semester_I.insertOne(studentResult);
+            }
+            else if (level === '1' && semester === 'II') {
+                result = await resultCollection_Level_1_Semester_II.insertOne(studentResult);
+            }
+            else if (level === '2' && semester === 'I') {
+                result = await resultCollection_Level_2_Semester_I.insertOne(studentResult);
+            }
+            else if (level === '2' && semester === 'II') {
+                result = await resultCollection_Level_2_Semester_II.insertOne(studentResult);
+            }
+            else if (level === '3' && semester === 'I') {
+                result = await resultCollection_Level_3_Semester_I.insertOne(studentResult);
+            }
+            else if (level === '3' && semester === 'II') {
+                result = await resultCollection_Level_3_Semester_II.insertOne(studentResult);
+            }
+            else if (level === '4' && semester === 'I') {
+                result = await resultCollection_Level_4_Semester_I.insertOne(studentResult);
+            }
+            else if (level === '4' && semester === 'II') {
+                result = await resultCollection_Level_4_Semester_II.insertOne(studentResult);
             }
             res.send(result);
         })
