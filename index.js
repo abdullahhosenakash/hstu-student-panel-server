@@ -161,28 +161,76 @@ async function run() {
             const semester = studentResult.semester;
             let result;
             if (level === '1' && semester === 'I') {
-                result = await resultCollection_Level_1_Semester_I.insertOne(studentResult);
+                const isAvailable = await resultCollection_Level_1_Semester_I.findOne({ studentId: studentResult.studentId });
+                if (isAvailable) {
+                    return res.send({ message: `The result for ${studentResult.studentName}, ${studentResult.studentId} is already updated!` });
+                }
+                else {
+                    result = await resultCollection_Level_1_Semester_I.insertOne(studentResult);
+                }
             }
             else if (level === '1' && semester === 'II') {
-                result = await resultCollection_Level_1_Semester_II.insertOne(studentResult);
+                const isAvailable = await resultCollection_Level_1_Semester_II.findOne({ studentId: studentResult.studentId });
+                if (isAvailable) {
+                    return res.send({ message: `The result for ${studentResult.studentName}, ${studentResult.studentId} is already updated!` });
+                }
+                else {
+                    result = await resultCollection_Level_1_Semester_II.insertOne(studentResult);
+                }
             }
             else if (level === '2' && semester === 'I') {
-                result = await resultCollection_Level_2_Semester_I.insertOne(studentResult);
+                const isAvailable = await resultCollection_Level_2_Semester_I.findOne({ studentId: studentResult.studentId });
+                if (isAvailable) {
+                    return res.send({ message: `The result for ${studentResult.studentName}, ${studentResult.studentId} is already updated!` });
+                }
+                else {
+                    result = await resultCollection_Level_2_Semester_I.insertOne(studentResult);
+                }
             }
             else if (level === '2' && semester === 'II') {
-                result = await resultCollection_Level_2_Semester_II.insertOne(studentResult);
+                const isAvailable = await resultCollection_Level_2_Semester_II.findOne({ studentId: studentResult.studentId });
+                if (isAvailable) {
+                    return res.send({ message: `The result for ${studentResult.studentName}, ${studentResult.studentId} is already updated!` });
+                }
+                else {
+                    result = await resultCollection_Level_2_Semester_II.insertOne(studentResult);
+                }
             }
             else if (level === '3' && semester === 'I') {
-                result = await resultCollection_Level_3_Semester_I.insertOne(studentResult);
+                const isAvailable = await resultCollection_Level_3_Semester_I.findOne({ studentId: studentResult.studentId });
+                if (isAvailable) {
+                    return res.send({ message: `The result for ${studentResult.studentName}, ${studentResult.studentId} is already updated!` });
+                }
+                else {
+                    result = await resultCollection_Level_3_Semester_I.insertOne(studentResult);
+                }
             }
             else if (level === '3' && semester === 'II') {
-                result = await resultCollection_Level_3_Semester_II.insertOne(studentResult);
+                const isAvailable = await resultCollection_Level_3_Semester_II.findOne({ studentId: studentResult.studentId });
+                if (isAvailable) {
+                    return res.send({ message: `The result for ${studentResult.studentName}, ${studentResult.studentId} is already updated!` });
+                }
+                else {
+                    result = await resultCollection_Level_3_Semester_II.insertOne(studentResult);
+                }
             }
             else if (level === '4' && semester === 'I') {
-                result = await resultCollection_Level_4_Semester_I.insertOne(studentResult);
+                const isAvailable = await resultCollection_Level_4_Semester_I.findOne({ studentId: studentResult.studentId });
+                if (isAvailable) {
+                    return res.send({ message: `The result for ${studentResult.studentName}, ${studentResult.studentId} is already updated!` });
+                }
+                else {
+                    result = await resultCollection_Level_4_Semester_I.insertOne(studentResult);
+                }
             }
             else if (level === '4' && semester === 'II') {
-                result = await resultCollection_Level_4_Semester_II.insertOne(studentResult);
+                const isAvailable = await resultCollection_Level_4_Semester_II.findOne({ studentId: studentResult.studentId });
+                if (isAvailable) {
+                    return res.send({ message: `The result for ${studentResult.studentName}, ${studentResult.studentId} is already updated!` });
+                }
+                else {
+                    result = await resultCollection_Level_4_Semester_II.insertOne(studentResult);
+                }
             }
             res.send(result);
         })
