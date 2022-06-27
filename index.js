@@ -90,6 +90,10 @@ async function run() {
             }
         });
 
+        app.get('/verifyToken', verifyJWT, async (req, res) => {
+            res.send('1');
+        })
+
         app.get('/isAdmin/:userEmailAndAdminSecretKey', async (req, res) => {
             const userEmailAndAdminSecretKey = req.params.userEmailAndAdminSecretKey;
             const userEmail = userEmailAndAdminSecretKey.split('&')[0];
