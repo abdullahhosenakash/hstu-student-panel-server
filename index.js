@@ -128,9 +128,9 @@ async function run() {
 
         app.get('/results/:studentIdLevelSemester', verifyJWT, async (req, res) => {
             const studentIdLevelSemester = req.params.studentIdLevelSemester;
-            const studentId = studentIdLevelSemester.split('&')[1];
-            const level = studentIdLevelSemester.split('&')[2];
-            const semester = studentIdLevelSemester.split('&')[3];
+            const studentId = studentIdLevelSemester.split('&')[0];
+            const level = studentIdLevelSemester.split('&')[1];
+            const semester = studentIdLevelSemester.split('&')[2];
             let result;
             if (level === '1' && semester === 'I') {
                 result = await resultCollection_Level_1_Semester_I.findOne({ studentId });
@@ -156,7 +156,13 @@ async function run() {
             else if (level === '4' && semester === 'II') {
                 result = await resultCollection_Level_4_Semester_II.findOne({ studentId });
             }
-            res.send(result);
+
+            if (result) {
+                return res.send(result);
+            }
+            else {
+                return res.send({ message: 'Result Not Found!' });
+            }
         });
 
         app.post('/updateResult', verifyJWT, async (req, res) => {
