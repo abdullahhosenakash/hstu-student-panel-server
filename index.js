@@ -32,6 +32,7 @@ async function run() {
         await client.connect();
         const userCollection = client.db("HSTUStudentPanel").collection("user");
         const adminCollection = client.db("HSTUStudentPanel").collection("admin");
+        const studentCollection = client.db("HSTUStudentPanel").collection("students");
         const resultCollection_Level_1_Semester_I = client.db("studentResults").collection("level-1-semester-I");
         const resultCollection_Level_1_Semester_II = client.db("studentResults").collection("level-1-semester-II");
         const resultCollection_Level_2_Semester_I = client.db("studentResults").collection("level-2-semester-I");
@@ -59,6 +60,12 @@ async function run() {
             res.send({ token, user });
         });
 
+        app.post('/updateStudent', verifyJWT, async (req, res) => {
+            const studentInfo = req.body;
+            const result = await studentCollection.insertOne(studentInfo);
+            res.send(result);
+        })
+
         app.get('/updateUser/:studentId', verifyJWT, async (req, res) => {
             const studentId = req.params.studentId;
             const result = await userCollection.findOne({ studentId });
@@ -81,7 +88,7 @@ async function run() {
 
         app.get('/studentInfo/:studentId', verifyJWT, async (req, res) => {
             const studentId = req.params.studentId;
-            const result = await resultCollection_Level_1_Semester_I.findOne({ studentId });
+            const result = await studentCollection.findOne({ studentId });
             if (result) {
                 res.send({ studentName: result.studentName });
             }
